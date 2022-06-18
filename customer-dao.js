@@ -30,10 +30,10 @@ export function delete_customer(id) {
 
 function validate_customer(cust) {
     if (Object.values(cust).some(x => x === null || x === '' || x === undefined)) {
-        throw "Error, unable to build Customer"
+        throw Error("Error, unable to build Customer")
     }
 
     if (get_customer(cust.id) != null) {
-        throw "Error, customer already exists for ID " + cust.id
+        throw Error("Error, customer already exists for ID " + cust.id)
     }
 }
