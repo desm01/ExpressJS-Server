@@ -50,6 +50,5 @@ describe('Customer DAO Tests', () => {
         equal(customers.length, 1)
         assert_customer(customer2, customers[0])
     })
-
    })
    
