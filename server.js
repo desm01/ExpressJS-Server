@@ -1,44 +1,48 @@
 import express, { json } from "express";
-import {insert_customer, get_customer} from "./customer-dao.js";
+import {insert_customer, get_customer, delete_customer} from "./customer-dao.js";
 var app = express();
 app.use(json());
 
 
 app.delete("/customer", (req, res) => {
-    
+    try {
+        const id = req.body.id
+        handle_success(res, 200, delete_customer(id))
+    }
+    catch(err) {
+        handle_error(res, err)
+    }
 });
 
 app.get("/customer", (req, res) => {
     try {
         const customer_id = req.body.id
-        get_customer(customer_id)
+        handle_success(res, 200, get_customer(customer_id))
     }
     catch (err) {
         handle_error(res, err)
     }
-    handle_success(res, 200, "Customer details")
 });
 
 app.post("/customer", (req, res) => {
     try {
         const customer = req.body
-        insert_customer(customer)
+        handle_success(res, 201, insert_customer(customer))
     }
     catch(err) {
         handle_error(res, err)
     }
-    handle_success(res, 201, "Customer Created Succesfully")
 });
 
 const handle_error = (res, err) => {
     console.log(err)
     res.status(500)
-    res.json("Fatal Error")
+    res.json(err)
 }
 
-const handle_success = (res, code, json) => {
+const handle_success = (res, code, result) => {
     res.status(code)
-    res.json(json)
+    res.json(result)
 }
 
 app.listen(3000, () => {
