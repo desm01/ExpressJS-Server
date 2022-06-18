@@ -7,9 +7,8 @@ export function insert_customer(customer) {
         email: customer.email,
         address: customer.address
     }
-    if (get_customer(cust.id) != null) {
-        throw "Error, customer already exists for ID " + cust.id
-    }
+
+    validate_customer(cust)
     customer_list.push(cust)
     return cust
 }
@@ -26,4 +25,15 @@ export function delete_customer(id) {
     console.log("Deleting customer by ID: " + id)
     customer_list = customer_list.filter(customer => customer.id != id)
     return "Customer ID: " + id + " succesfully"
+}
+
+
+function validate_customer(cust) {
+    if (Object.values(cust).some(x => x === null || x === '' || x === undefined)) {
+        throw "Error, unable to build Customer"
+    }
+
+    if (get_customer(cust.id) != null) {
+        throw "Error, customer already exists for ID " + cust.id
+    }
 }
