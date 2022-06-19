@@ -1,39 +1,57 @@
-var customer_list = []
+import {create_connection} from "./database.js"
 
 export function insert_customer(customer) {
-    const cust = {
-        id: customer.id,
-        name: customer.name,
-        email: customer.email,
-        address: customer.address
-    }
-
-    validate_customer(cust)
-    customer_list.push(cust)
-    return cust
+    const conn = create_connection()
+    conn.query('INSERT INTO customers VALUES ?', customer, (error, results) => {
+        if (error) throw error;
+    })
+    conn.end()
+    return customer
 }
 
 export function get_customer(id) {
     console.log("Getting Customer by ID: " + id)
     if (id == undefined) {
-        return customer_list;
+        return get_all_customers()
     }
-    return customer_list.find(customer => customer.id == id)
+    return get_customer_by_id(id)
 }
 
 export function delete_customer(id) {
     console.log("Deleting customer by ID: " + id)
-    customer_list = customer_list.filter(customer => customer.id != id)
+    delete_customer_by_id(id)
     return "Customer ID: " + id + " succesfully"
 }
 
+function get_all_customers() {
+    const conn = create_connection()
+    let res;
+    conn.query('SELECT * FROM customers', (error, results) => {
+        if (error) throw error;
+        res = results
+    })
+    conn.end()
+    return res
+}
 
-function validate_customer(cust) {
-    if (Object.values(cust).some(x => x === null || x === '' || x === undefined)) {
-        throw Error("Error, unable to build Customer")
-    }
+function get_customer_by_id(id) {
+    const conn = create_connection()
+    let res;
+    conn.query('SELECT * FROM customers WHERE id = ?', id, (error, results) => {
+        if (error) throw error;
+        res = results
+    })
+    conn.end()
+    return res
+}
 
-    if (get_customer(cust.id) != null) {
-        throw Error("Error, customer already exists for ID " + cust.id)
-    }
+function delete_customer_by_id(id) {
+    const conn = create_connection()
+    let res;
+    conn.query('DELETE FROM customers WHERE id = ?', id, (error, results) => {
+        if (error) throw error;
+        res = results
+    })
+    conn.end()
+    return res
 }
